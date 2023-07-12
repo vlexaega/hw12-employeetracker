@@ -1,15 +1,15 @@
 //DEPENDENCIES
 const inquirer = require ("inquirer");
 const mysql = require ("mysql2");
-const cTable = require('console.table');
+// const cTable = require('console.table');
 
 //CONNECT TO DATABASE
 const db = mysql.createConnection({
     host: "localhost",
-    port: 3301,
+    port: 3306,
     user: "root",
     password: "alligator",
-    database: "emp_db"
+    database: "employees_db"
 });
 
 db.connect(function(err) {
@@ -250,7 +250,6 @@ function addRole() {
     }
 //FUNCTION TO ADD A DEPARTMENT
 function addDepartment() { 
-
     inquirer.prompt([
         {
           name: "name",
