@@ -91,7 +91,15 @@ function viewAllRoles(){
         startPrompts()
     })
 }
-
+//FUNCTION TO VIEW ALL DEPARTMENTS 
+function viewAllDepartments(){
+    db.query("SELECT name AS Departments FROM department;", 
+    function(err, res) {
+        if (err) throw err
+        console.table(res)
+        startPrompts()
+    })
+}
 //FUNCTION TO INCLUDE ROLES AS AN OPTION FOR THE ADD EMPLOYEE PROMPT
 
 //FUNCTION TO ADD EMPLOYEE
