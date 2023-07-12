@@ -101,6 +101,29 @@ function viewAllDepartments(){
     })
 }
 //FUNCTION TO INCLUDE ROLES AS AN OPTION FOR THE ADD EMPLOYEE PROMPT
+let roleArr = [];
+function selectRole(){
+    db.query("SELECT * FROM role", function(err, res) {
+        if (err) throw err
+        for (var i = 0; i < res.length; i++) {
+          roleArr.push(res[i].title);
+        }
+      })
+      return roleArr;
+}
+
+//FUNCTION TO SHOW ALL POSSIBLE MANAGERS FOR THE ADD EMPLOYEE PROMPT
+let managersArr = [];
+function selectManager(){
+    db.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL", function(err, res) {
+        if (err) throw err
+        for (var i = 0; i < res.length; i++) {
+          managersArr.push(res[i].first_name);
+        }
+    
+      })
+      return managersArr;
+}
 
 //FUNCTION TO ADD EMPLOYEE
 
