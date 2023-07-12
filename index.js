@@ -126,9 +126,149 @@ function selectManager(){
 }
 
 //FUNCTION TO ADD EMPLOYEE
+function addEmployee(){
+    inquirer.prompt([
+        {
+          name: "firstname",
+          type: "input",
+          message: "Enter employees first name: "
+        },
+        {
+          name: "lastname",
+          type: "input",
+          message: "Enter employees last name: "
+        },
+        {
+          name: "role",
+          type: "list",
+          message: "Enter employees role: ",
+          choices: selectRole()
+        },
+        {
+            name: "choice",
+            type: "rawlist",
+            message: "Enter employees manager name:",
+            choices: selectManager()
+        }
+    ]).then(function (val) {
+      var roleId = selectRole().indexOf(val.role) + 1
+      var managerId = selectManager().indexOf(val.choice) + 1
+      db.query("INSERT INTO employee (first_name, last_name, manager_id, role_id) VALUES (?, ?, ?, ?)", [val.firstname, val.lastname, managerId, roleId], function(err){
+          if (err) throw err
+          console.table(val)
+          startPrompts()
+      })
+  })
+}
 
 //FUNCTION TO UPDATE EMPLOYEE RECORD
+function updateEmployee() {
+    db.query('SELECT * FROM employee', (err, employees) => {
+      if (err) console.log(err);
+      employees = employees.map((employee) => {
+          return {
+              name: `${employee.first_name} ${employee.last_name}`,
+              value: employee.id,
+          };
+      });
+      db.query('SELECT * FROM role', (err, roles) => {
+          if (err) console.log(err);
+          roles = roles.map((role) => {
+              return {
+                  name: role.title,
+                  value: role.id,
+              }
+          });
+          inquirer
+              .prompt([
+                  {
+                      type: 'list',
+                      name: 'selectEmployee',
+                      message: 'Select employee to update...',
+                      choices: employees,
+                  },
+                  {
+                      type: 'list',
+                      name: 'selectNewRole',
+                      message: 'Select new employee role...',
+                      choices: roles,
+                  },
+              ])
+              .then((data) => {
+                  db.query('UPDATE employee SET ? WHERE ?',
+                      [
+                          {
+                              role_id: data.selectNewRole,
+                          },
+                          {
+                              id: data.selectEmployee,
+                          },
+                      ],
+                      function (err) {
+                          if (err) throw err;
+                      }
+                  );
+                  console.log('Employee role updated');
+                  startPrompts();
+              });
+  
+      });
+  });
+  };
 
 //FUNCTION TO ADD ROLE
-
+function addRole() { 
+    db.query("SELECT role.title AS Title, role.salary AS Salary FROM role",   function(err, res) {
+      inquirer.prompt([
+          {
+            name: "Title",
+            type: "input",
+            message: "Enter Role:"
+          },
+          {
+            name: "Salary",
+            type: "input",
+            message: "Enter Salary:"
+  
+          } 
+      ]).then(function(res) {
+          db.query(
+              "INSERT INTO role SET ?",
+              {
+                title: res.Title,
+                salary: res.Salary,
+              },
+              function(err) {
+                  if (err) throw err
+                  console.table(res);
+                  startPrompts();
+              }
+          )
+  
+      });
+    });
+    }
 //FUNCTION TO ADD A DEPARTMENT
+function addDepartment() { 
+
+    inquirer.prompt([
+        {
+          name: "name",
+          type: "input",
+          message: "Enter dept to add:"
+        }
+    ]).then(function(res) {
+        var query = db.query(
+            "INSERT INTO department SET ? ",
+            {
+              name: res.name
+            
+            },
+            function(err) {
+                if (err) throw err
+                console.table(res);
+                startPrompts();
+            }
+        )
+    })
+  }
