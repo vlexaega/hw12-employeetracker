@@ -76,13 +76,21 @@ function startPrompts(){
 function viewAllEmployees(){
     db.query("SELECT employee.first_name, employee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id LEFT JOIN employee e on employee.manager_id = e.id;", 
     function(err, res) {
-      if (err) throw err
-      console.table(res)
-      startPrompts()
+        if (err) throw err
+        console.table(res)
+        startPrompts()
   })
 }
 
 //FUNCTION TO VIEW ALL EMPLOYEES BY ROLES
+function viewAllRoles(){
+    db.query("SELECT DISTINCT role.title AS Roles FROM employee JOIN role ON employee.role_id = role.id;", 
+    function(err, res) {
+        if (err) throw err
+        console.table(res)
+        startPrompts()
+    })
+}
 
 //FUNCTION TO INCLUDE ROLES AS AN OPTION FOR THE ADD EMPLOYEE PROMPT
 
