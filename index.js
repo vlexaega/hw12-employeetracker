@@ -41,7 +41,8 @@ function seedDatabase() {
   
     console.log('Database seeded with initial data');
   }
-  
+
+seedDatabase();
   
 
 //FUNCTION TO PROMPT USER FOR ACTION
@@ -63,31 +64,31 @@ function startPrompts(){
         }
     ]).then(function(val) {
         switch (val.choice) {
-            case "View All Employees":
+            case "View all employees":
                 viewAllEmployees();
             break;
 
-            case "View All Roles":
+            case "View all roles":
                 viewAllRoles();
             break;
 
-            case "View All Departments":
+            case "View all departments":
                 viewAllDepartments();
             break;
 
-            case "Update Employee":
+            case "Update employee":
                 updateEmployee();
             break;
 
-            case "Add Employee":
+            case "Add employee":
                 addEmployee();
             break;
 
-            case "Add Role":
+            case "Add role":
                 addRole();
             break;
 
-            case "Add Department":
+            case "Add department":
                 addDepartment();
             break;
 
@@ -100,6 +101,7 @@ function startPrompts(){
 
 //FUNCTION TO VIEW ALL EMPLOYEES
 function viewAllEmployees() {
+    console.log("View all employees function called!")
     db.query(
         "SELECT employees.first_name, employees.last_name, roles.title, roles.salary, department.name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employees INNER JOIN roles ON roles.id = employees.role_id INNER JOIN department ON department.id = roles.department_id LEFT JOIN employees e ON employees.manager_id = e.id;",
         function (err, res) {
@@ -112,6 +114,7 @@ function viewAllEmployees() {
 
 //FUNCTION TO VIEW ALL EMPLOYEES BY ROLES
 function viewAllRoles() {
+    console.log("View all roles function called!")
     db.query(
         "SELECT DISTINCT roles.title AS Roles FROM employees JOIN roles ON employees.role_id = roles.id;",
         function (err, res) {
@@ -123,6 +126,7 @@ function viewAllRoles() {
   }
 //FUNCTION TO VIEW ALL DEPARTMENTS 
 function viewAllDepartments() {
+    console.log("View all departments function called!")
     db.query("SELECT name AS Departments FROM department;", function (err, res) {
         if (err) throw err;
         console.table(res);
@@ -184,7 +188,7 @@ function addEmployee(){
     ]).then(function (val) {
       var roleId = selectRole().indexOf(val.role) + 1
       var managerId = selectManager().indexOf(val.choice) + 1
-      db.query("INSERT INTO employee (first_name, last_name, manager_id, role_id) VALUES (?, ?, ?, ?)", [val.firstname, val.lastname, managerId, roleId], function(err){
+      db.query("INSERT INTO employees (first_name, last_name, manager_id, role_id) VALUES (?, ?, ?, ?)", [val.firstname, val.lastname, managerId, roleId], function(err){
           if (err) throw err
           console.table(val)
           startPrompts()
@@ -194,7 +198,7 @@ function addEmployee(){
 
 //FUNCTION TO UPDATE EMPLOYEE RECORD
 function updateEmployee() {
-    db.query('SELECT * FROM employee', (err, employees) => {
+    db.query('SELECT * FROM employees', (err, employees) => {
       if (err) console.log(err);
       employees = employees.map((employee) => {
           return {
@@ -202,7 +206,7 @@ function updateEmployee() {
               value: employee.id,
           };
       });
-      db.query('SELECT * FROM role', (err, roles) => {
+      db.query('SELECT * FROM roles', (err, roles) => {
           if (err) console.log(err);
           roles = roles.map((role) => {
               return {
@@ -226,7 +230,7 @@ function updateEmployee() {
                   },
               ])
               .then((data) => {
-                  db.query('UPDATE employee SET ? WHERE ?',
+                  db.query('UPDATE employees SET ? WHERE ?',
                       [
                           {
                               role_id: data.selectNewRole,
@@ -249,7 +253,7 @@ function updateEmployee() {
 
 //FUNCTION TO ADD ROLE
 function addRole() { 
-    db.query("SELECT role.title AS Title, role.salary AS Salary FROM role",   function(err, res) {
+    db.query("SELECT roles.title AS Title, roles.salary AS Salary FROM roles",   function(err, res) {
       inquirer.prompt([
           {
             name: "Title",
@@ -264,7 +268,7 @@ function addRole() {
           } 
       ]).then(function(res) {
           db.query(
-              "INSERT INTO role SET ?",
+              "INSERT INTO roles SET ?",
               {
                 title: res.Title,
                 salary: res.Salary,
@@ -292,7 +296,6 @@ function addDepartment() {
             "INSERT INTO department SET ? ",
             {
               name: res.name
-            
             },
             function(err) {
                 if (err) throw err
