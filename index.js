@@ -14,9 +14,35 @@ const db = mysql.createConnection({
 
 db.connect(function(err) {
     if(err) throw err
-    console.log("Connect to emp_db")
+    console.log("Connected to employees_db");
+    seedDatabase();
     startPrompts();
 });
+
+//FUNCTION TO SEED THE DATABASE WITH INITIAL DATA
+function seedDatabase() {
+    const seeds = [
+      { id: 1, name: 'Sales' },
+      { id: 2, name: 'Engineering' },
+      { id: 3, name: 'Finance' },
+      { id: 4, name: 'Legal' }
+    ];
+  
+    seeds.forEach(seed => {
+      db.query('SELECT * FROM department WHERE id = ?', [seed.id], function(err, results) {
+        if (err) throw err;
+        if (results.length === 0) {
+          db.query('INSERT INTO department SET ?', seed, function(err, results) {
+            if (err) throw err;
+          });
+        }
+      });
+    });
+  
+    console.log('Database seeded with initial data');
+  }
+  
+  
 
 //FUNCTION TO PROMPT USER FOR ACTION
 function startPrompts(){
@@ -73,56 +99,61 @@ function startPrompts(){
 }
 
 //FUNCTION TO VIEW ALL EMPLOYEES
-function viewAllEmployees(){
-    db.query("SELECT employee.first_name, employee.last_name, role.title, role.salary, department.name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role on role.id = employee.role_id INNER JOIN department on department.id = role.department_id LEFT JOIN employee e on employee.manager_id = e.id;", 
-    function(err, res) {
-        if (err) throw err
-        console.table(res)
-        startPrompts()
-  })
-}
+function viewAllEmployees() {
+    db.query(
+        "SELECT employees.first_name, employees.last_name, roles.title, roles.salary, department.name, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employees INNER JOIN roles ON roles.id = employees.role_id INNER JOIN department ON department.id = roles.department_id LEFT JOIN employees e ON employees.manager_id = e.id;",
+        function (err, res) {
+          if (err) throw err;
+          console.table(res);
+          startPrompts();
+        }
+      );      
+  }
 
 //FUNCTION TO VIEW ALL EMPLOYEES BY ROLES
-function viewAllRoles(){
-    db.query("SELECT DISTINCT role.title AS Roles FROM employee JOIN role ON employee.role_id = role.id;", 
-    function(err, res) {
-        if (err) throw err
-        console.table(res)
-        startPrompts()
-    })
-}
+function viewAllRoles() {
+    db.query(
+        "SELECT DISTINCT roles.title AS Roles FROM employees JOIN roles ON employees.role_id = roles.id;",
+        function (err, res) {
+          if (err) throw err;
+          console.table(res);
+          startPrompts();
+        }
+      );
+  }
 //FUNCTION TO VIEW ALL DEPARTMENTS 
-function viewAllDepartments(){
-    db.query("SELECT name AS Departments FROM department;", 
-    function(err, res) {
-        if (err) throw err
-        console.table(res)
-        startPrompts()
-    })
-}
+function viewAllDepartments() {
+    db.query("SELECT name AS Departments FROM department;", function (err, res) {
+        if (err) throw err;
+        console.table(res);
+        startPrompts();
+      });
+  }
 //FUNCTION TO INCLUDE ROLES AS AN OPTION FOR THE ADD EMPLOYEE PROMPT
 let roleArr = [];
-function selectRole(){
-    db.query("SELECT * FROM role", function(err, res) {
-        if (err) throw err
-        for (var i = 0; i < res.length; i++) {
-          roleArr.push(res[i].title);
-        }
-      })
-      return roleArr;
+function selectRole() {
+  db.query("SELECT * FROM roles", function (err, res) {
+    if (err) throw err;
+    for (var i = 0; i < res.length; i++) {
+      roleArr.push(res[i].title);
+    }
+  });
+  return roleArr;
 }
 
 //FUNCTION TO SHOW ALL POSSIBLE MANAGERS FOR THE ADD EMPLOYEE PROMPT
 let managersArr = [];
-function selectManager(){
-    db.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL", function(err, res) {
-        if (err) throw err
-        for (var i = 0; i < res.length; i++) {
-          managersArr.push(res[i].first_name);
-        }
-    
-      })
-      return managersArr;
+function selectManager() {
+  db.query(
+    "SELECT first_name, last_name FROM employees WHERE manager_id IS NULL",
+    function (err, res) {
+      if (err) throw err;
+      for (var i = 0; i < res.length; i++) {
+        managersArr.push(res[i].first_name);
+      }
+    }
+  );
+  return managersArr;
 }
 
 //FUNCTION TO ADD EMPLOYEE
