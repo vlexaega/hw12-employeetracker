@@ -1,4 +1,3 @@
-
 INSERT INTO department (name)
 VALUE ("Sales");
 INSERT INTO department (name)
@@ -25,17 +24,17 @@ INSERT INTO role (title, salary, department_id)
 VALUE ("Legal Team Member", 190000, 4);
 
 
-INSERT INTO employee (first_name, last_name, manager_id, role_id)
+INSERT INTO employees (first_name, last_name, manager_id, role_id)
 VALUE ("John", "Snow", null, 1);
-INSERT INTO employee (first_name, last_name, manager_id, role_id)
+INSERT INTO employees (first_name, last_name, manager_id, role_id)
 VALUE ("Linnea", "Youth", null, 2);
-INSERT INTO employee (first_name, last_name, manager_id, role_id)
+INSERT INTO employees (first_name, last_name, manager_id, role_id)
 VALUE ("Jiminy", "Cricket", null,3 );
-INSERT INTO employee (first_name, last_name, manager_id, role_id)
+INSERT INTO employees (first_name, last_name, manager_id, role_id)
 VALUE ("Indiana", "Jonesa", 1, 4);
-INSERT INTO employee (first_name, last_name, manager_id, role_id)
+INSERT INTO employees (first_name, last_name, manager_id, role_id)
 VALUE ("Coco", "Nuttah", 4, 5);
-INSERT INTO employee (first_name, last_name, manager_id, role_id)
+INSERT INTO employees (first_name, last_name, manager_id, role_id)
 VALUE ("Selena", "Dyon", 1, 6);
-INSERT INTO employee (first_name, last_name, manager_id, role_id)
+INSERT INTO employees (first_name, last_name, manager_id, role_id)
 VALUE ("Taylor", "Slow", 2, 7);
