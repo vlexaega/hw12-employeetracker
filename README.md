@@ -8,6 +8,9 @@ This app is a command-line interface using Node JS where a user can select from 
 
 Note that this project uses Node JS (https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/). Once the repo has been cloned, utilize npm i to read in the packages from the package.json file. 
 
+This video provides a walkthrough of the functionality of the application:
+https://drive.google.com/file/d/1-ofXJlk8scsK_8FKz12m1u8axYazVcW2/view 
+
 ## Usage
 
 You can use the sample data provided by running the schema and seeds via mysql. 
